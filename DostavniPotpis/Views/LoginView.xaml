@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:DostavniPotpis.ViewModels"
+             x:Class="DostavniPotpis.Views.LoginView"
+             x:DataType="viewmodels:LoginViewModel"
+             Title="LoginView"
+             Shell.NavBarIsVisible="False"
+             xmlns:mct="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             BackgroundColor="WhiteSmoke">
+
+    <VerticalStackLayout
+    Spacing="0"
+    Padding="30"
+    VerticalOptions="Start">
+
+        <Image Source="extra.png" HeightRequest="100" WidthRequest="200" />
+        <StackLayout>
+            <Label Margin="0,50,0,30" Text="Prijava u aplikaciju" FontSize="Title" TextColor="{StaticResource Gray600}" HorizontalTextAlignment="Start" />
+        </StackLayout>
+
+        <VerticalStackLayout Spacing="15">
+            <Label Text="Korisnik" FontSize="Small" TextColor="#F25922" HorizontalTextAlignment="Start" />
+            <Frame>
+                <Entry Text="{Binding UserName.Value, Mode=TwoWay}" Margin="0,0,0,0" VerticalOptions="Center" Placeholder="Korisničko ime">
+                    <Entry.Behaviors>
+                        <mct:EventToCommandBehavior
+                        EventName="TextChanged"
+                        Command="{Binding ValidateCommand}" />
+                    </Entry.Behaviors>
+                </Entry>
+
+            </Frame>
+            <Label Text="Lozinka" FontSize="Small" TextColor="#F25922" HorizontalTextAlignment="Start"/>
+            <Frame>
+                <Entry IsPassword="True" Text="{Binding Password.Value, Mode=TwoWay}" Margin="0,0,0,0" VerticalOptions="Center" Placeholder="*******">
+                    <Entry.Behaviors>
+                        <mct:EventToCommandBehavior
+                        EventName="TextChanged"
+                        Command="{Binding ValidateCommand}" />
+                    </Entry.Behaviors>
+                </Entry>
+            </Frame>
+        </VerticalStackLayout>
+
+        <StackLayout Padding="30">
+            <Button WidthRequest="330" Text="Prijava" Command="{Binding SignInCommand}" TextColor="White" FontSize="Body" HorizontalOptions="Center" BackgroundColor="#F25922" />
+        </StackLayout>
+
+    </VerticalStackLayout>
+
+</ContentPage>
