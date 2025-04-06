@@ -15,7 +15,7 @@ namespace DostavniPotpis.Services.Navigation
             _preferencesService = preferencesService;
         }
 
-        public Task IntializeAsync() =>
+        public Task InitializeAsync() =>
             NavigateToAsync(
                 true
                 ? "//LoginView"
