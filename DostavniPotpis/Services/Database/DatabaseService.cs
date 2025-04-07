@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DostavniPotpis.Services.Api
+namespace DostavniPotpis.Services.Database
 {
-    public interface IApiService
+    public class DatabaseService : IDatabaseService
     {
-        Task<string> Ping();
     }
 }

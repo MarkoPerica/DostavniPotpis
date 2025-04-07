@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 namespace DostavniPotpis.Services.Preferences
 {
     public interface IPreferencesService
-    {       
+    {
+        string GetPreferences(string key, string defaultValue);
+        void SavePreferences(string key, string value);
     }
 }

@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DostavniPotpis.Services.Api
+namespace DostavniPotpis.Models
 {
-    public interface IApiService
+    public class DocumentModel
     {
-        Task<string> Ping();
     }
 }

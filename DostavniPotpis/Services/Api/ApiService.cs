@@ -50,7 +50,9 @@ namespace DostavniPotpis.Services.Api
 
         private async Task<string> GetServerUri()
         {
-            throw new NotImplementedException();
+            return await Task.FromResult(_preferencesService.GetPreferences("Appserver", string.Empty));
         }
+
+        
     }
 }

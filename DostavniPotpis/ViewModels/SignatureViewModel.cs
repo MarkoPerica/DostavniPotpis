@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DostavniPotpis.Services.Api
+namespace DostavniPotpis.ViewModels
 {
-    public interface IApiService
+    class SignatureViewModel
     {
-        Task<string> Ping();
     }
 }
