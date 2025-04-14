@@ -1,4 +1,6 @@
-﻿using DostavniPotpis.Services.Preferences;
+﻿using DostavniPotpis.Models;
+using DostavniPotpis.Services.Preferences;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,9 +45,90 @@ namespace DostavniPotpis.Services.Api
             }
         }
 
-        private HttpClient GetOrCreateHttpClient()
+        public async Task<(bool Poslano, string ResponseContent)> Login(string username, string password, string domain = "")
         {
-            throw new NotImplementedException();
+            string serverUri = await GetServerUri();
+
+            if (string.IsNullOrEmpty(serverUri))
+            {
+                return (false, "URI nije upisan u postavke.");
+            }
+
+            serverUri = serverUri + GlobalSettings.LoginUri;
+
+            try
+            {
+                using (var client = GetOrCreateHttpClient(username, password, domain))
+                {
+                    HttpResponseMessage response = await client.GetAsync(serverUri);
+                    string responseContent = await response.Content.ReadAsStringAsync();
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        try
+                        {
+                            var parsedResponse = JsonConvert.DeserializeObject<LoginModel>(responseContent);
+
+                            if (parsedResponse != null && !parsedResponse.HasErrors)
+                            {
+                                return (true, responseContent);
+                            }
+                            else
+                            {
+                                return (false, responseContent);
+                            }
+                        }
+                        catch (JsonException ex)
+                        {
+                            return (false, $"Greška pri parsiranju odgovora: {ex.Message}\nOdgovor servera: {responseContent}");
+                        }
+                    }
+                    else
+                    {
+                        // Ako nije uspješan status, pokušaj parsirati grešku
+                        try
+                        {
+                            var errorResponse = JsonConvert.DeserializeObject<ErrorResponseModel>(responseContent);
+                            if (errorResponse != null && errorResponse.NumErrors > 0)
+                            {
+                                return (false, $"Greška: {errorResponse.ErrorMessage}");
+                            }
+                        }
+                        catch (JsonException)
+                        {
+                            return (false, $"Greška: {response.StatusCode} - {responseContent}");
+                        }
+
+                        return (false, $"Greška: {response.StatusCode} - {responseContent}");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return (false, $"Greška: {ex.Message}");
+            }
+        }
+
+        private HttpClient GetOrCreateHttpClient(string username = "", string password = "", string domain = "")
+        {
+            HttpClient httpClient = new HttpClient();
+
+            var user = username;
+            var pass = password;
+            var basicAuthValue = "";
+
+            if (domain == "")
+                basicAuthValue = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{username}:{password}"));
+            else
+                basicAuthValue = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{domain}:{username}:{password}"));
+
+            httpClient.DefaultRequestHeaders.Clear();
+            httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
+            httpClient.DefaultRequestHeaders.Add("X-Authorization", basicAuthValue);
+            httpClient.DefaultRequestHeaders.Add("User-Agent", "exTra Dostava");
+
+            return httpClient;
+
         }
 
         private async Task<string> GetServerUri()

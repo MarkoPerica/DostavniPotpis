@@ -12,5 +12,6 @@ namespace DostavniPotpis
         public const string AdminPassword = "bilbo";
 
         public const string PingUri = "/DocumentSignature/web/Ping";
+        public const string LoginUri = "/DocumentSignature/web/Login";
     }
 }
