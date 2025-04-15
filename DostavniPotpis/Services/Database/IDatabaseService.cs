@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DostavniPotpis.Services.Database
+namespace DostavniPotpis.Services
 {
     public interface IDatabaseService
     {

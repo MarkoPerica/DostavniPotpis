@@ -1,5 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using DostavniPotpis.Services.Api;
+using DostavniPotpis.Services;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

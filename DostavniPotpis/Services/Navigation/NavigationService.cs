@@ -17,9 +17,10 @@ namespace DostavniPotpis.Services.Navigation
 
         public Task InitializeAsync() =>
             NavigateToAsync(
-                true
+                string.IsNullOrEmpty(_preferencesService.GetPreferences("User", string.Empty)) &&
+                string.IsNullOrEmpty(_preferencesService.GetPreferences("Password", string.Empty))
                 ? "//LoginView"
-                : "//LoginView"
+                : "//MainView"
                 );
 
         public Task NavigateToAsync(string route, IDictionary<string, object> routeParam = null)

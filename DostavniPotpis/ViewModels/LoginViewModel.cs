@@ -1,9 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using DostavniPotpis.Services.Api;
+using DostavniPotpis.Models;
+using DostavniPotpis.Services;
 using DostavniPotpis.Services.Navigation;
 using DostavniPotpis.Services.Preferences;
 using DostavniPotpis.Validations;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,6 +29,10 @@ namespace DostavniPotpis.ViewModels
 
         [ObservableProperty]
         private ValidatableObject<string> _password = new();
+
+        [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(SignInCommand))]
+        private bool _isValid;
 
         public LoginViewModel(IApiService apiService, INavigationService navigationService, IPreferencesService preferencesService)
         {
@@ -72,9 +78,73 @@ namespace DostavniPotpis.ViewModels
             {
                 await IsBusyFor(async () =>
                 {
+                    var (poslano, responseMessage) = await _apiService.Login(UserName.Value, Password.Value).ConfigureAwait(false);
 
+                    if (poslano)
+                    {
+                        _preferencesService.SavePreferences("User", UserName.Value);
+                        _preferencesService.SavePreferences("Password", Password.Value);
+
+                        UserName.Value = "";
+                        Password.Value = "";
+
+                        await _navigationService.NavigateToAsync("//MainView");
+                    }
+                    else
+                    {
+                        string errorMessage = responseMessage;
+
+                        try
+                        {
+                            var errorResponse = JsonConvert.DeserializeObject<ErrorResponseModel>(responseMessage);
+                            if (errorResponse != null && errorResponse.NumErrors > 0)
+                            {
+                                errorMessage = errorResponse.ErrorMessage;
+                            }
+                        }
+                        catch (JsonException)
+                        {
+                            //TODO:Ako parsiranje ne uspije, ostavi originalni `responseMessage`
+                        }
+
+                        await ShowAlertAsync("Prijava neuspješna", errorMessage);
+                    }
                 });
             }
+        }
+
+        private async Task ShowAlertAsync(string title, string message)
+        {
+            if (Shell.Current == null)
+            {
+                Console.WriteLine("Shell.Current is null! Alert can't show.");
+                return;
+            }
+
+            await MainThread.InvokeOnMainThreadAsync(async () =>
+            {
+                try
+                {
+                    message = message.Replace("\n", " ").Replace("\r", " ");
+                    await Shell.Current.DisplayAlert(title, message, "OK");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error with displaying alert: {ex.Message}");
+                }
+            });
+        }
+
+        [RelayCommand]
+        private void Validate()
+        {
+            IsValid = UserName.Validate() && Password.Validate();
+        }
+
+        private void AddValidations()
+        {
+            UserName.Validations.Add(new IsNotEmptyOrNull<string> { ValidationMessage = "Potrebno je upisati korisničko ime." });
+            Password.Validations.Add(new IsNotEmptyOrNull<string> { ValidationMessage = "Potrebno je upisati lozinku." });
         }
     }
 }

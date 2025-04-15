@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DostavniPotpis.Services.Api
+namespace DostavniPotpis.Services
 {
     public class ApiService : IApiService
     {
