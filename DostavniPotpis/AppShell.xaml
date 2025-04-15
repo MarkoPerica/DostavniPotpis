@@ -3,13 +3,26 @@
     x:Class="DostavniPotpis.AppShell"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:local="clr-namespace:DostavniPotpis"
+    xmlns:local="clr-namespace:DostavniPotpis.Views"
     Shell.FlyoutBehavior="Disabled"
-    Title="DostavniPotpis">
+    Title="DostavniPotpis"
+    Shell.TitleColor="#F25922">
 
     <ShellContent
-        Title="Home"
-        ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />
+        Title="Login"
+        ContentTemplate="{DataTemplate local:LoginView}"
+        Route="LoginView" />
 
+    <TabBar>
+        <ShellContent
+            Title="Potpisna lista"
+            ContentTemplate="{DataTemplate local:MainView}"
+            Icon="potpis.svg"
+            Route="MainView" />
+        <ShellContent
+            Title="Prijenos"
+            ContentTemplate="{DataTemplate local:TransferView}"
+            Icon="prijenos.svg"
+            Route="TransferView" />
+    </TabBar>
 </Shell>
