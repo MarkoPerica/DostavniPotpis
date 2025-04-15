@@ -1,11 +1,11 @@
-﻿using DostavniPotpis.Services.Preferences;
+﻿using DostavniPotpis.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DostavniPotpis.Services.Navigation
+namespace DostavniPotpis.Services
 {
     public class NavigationService : INavigationService
     {

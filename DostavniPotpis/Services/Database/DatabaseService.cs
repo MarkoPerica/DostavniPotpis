@@ -22,12 +22,38 @@ namespace DostavniPotpis.Services
             }
         }
 
-        public async Task<int> AddDokument(DocumentModel documentModel)
+        public async Task<int> AddDocument(DocumentModel documentModel)
         {
             await SetUpDb();
 
             await _dbConnection.InsertAsync(documentModel);
             return documentModel.Id;
+        }
+
+        public async Task<List<DocumentModel>> GetDocumentList()
+        {
+            await SetUpDb();
+            var documentList = await _dbConnection.Table<DocumentModel>().ToListAsync();
+            return documentList;
+        }
+
+        public async Task<int> UpdateDocument(DocumentModel documentModel)
+        {
+            await SetUpDb();
+
+            await _dbConnection.UpdateAsync(documentModel);
+            return documentModel.Id;
+        }
+
+        public async Task<int> DeleteDocument(DocumentModel documentModel)
+        {
+            await SetUpDb();
+            return await _dbConnection.DeleteAsync(documentModel);
+        }
+
+        public async Task DeleteDocumentAll()
+        {
+            await _dbConnection.DeleteAllAsync<DocumentModel>();
         }
     }
 }

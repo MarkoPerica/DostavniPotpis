@@ -1,5 +1,5 @@
 ﻿using DostavniPotpis.Models;
-using DostavniPotpis.Services.Preferences;
+using DostavniPotpis.Services;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;

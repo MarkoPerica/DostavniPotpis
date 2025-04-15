@@ -9,6 +9,11 @@ namespace DostavniPotpis.Services
 {
     public interface IDatabaseService
     {
-        Task<int> AddDokument(DocumentModel documentModel);
+        Task<int> AddDocument(DocumentModel documentModel);
+        Task<List<DocumentModel>> GetDocumentList();
+        Task<int> UpdateDocument(DocumentModel documentModel);
+        Task<int> DeleteDocument(DocumentModel documentModel);
+        Task DeleteDocumentAll();
+
     }
 }

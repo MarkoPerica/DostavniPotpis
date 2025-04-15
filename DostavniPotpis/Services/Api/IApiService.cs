@@ -9,6 +9,6 @@ namespace DostavniPotpis.Services
     public interface IApiService
     {
         Task<string> Ping();
-        Task<(bool Poslano, string ResponseContent)> Login(string username, string password, string domain = "");
+        Task<(bool Poslano, string ResponseContent)> Login(string username, string password, string domain = "");        
     }
 }

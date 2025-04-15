@@ -2,8 +2,8 @@
 using CommunityToolkit.Mvvm.Input;
 using DostavniPotpis.Models;
 using DostavniPotpis.Services;
-using DostavniPotpis.Services.Navigation;
-using DostavniPotpis.Services.Preferences;
+using DostavniPotpis.Services;
+using DostavniPotpis.Services;
 using DostavniPotpis.Validations;
 using Newtonsoft.Json;
 using System;

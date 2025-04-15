@@ -13,5 +13,15 @@ namespace DostavniPotpis
 
         public const string PingUri = "/DocumentSignature/web/Ping";
         public const string LoginUri = "/DocumentSignature/web/Login";
+
+        public const int StatusUTijeku = 1; // "1 Isporuka u tijeku"
+        public const int StatusIsporuceno = 2; // "2 Isporučeno"
+        public const int StatusVraceno = 3; // "3 Vraćeno"
+        public const int StatusOdbijeno = 4; // "4 Odbijeno"
+
+        public const string StatusUTijekuColor = "#e0f72f";
+        public const string StatusIsporucenoColor = "#008000";
+        public const string StatusVracenoColor = "#080df7";
+        public const string StatusOdbijenoColor = "#F25922";
     }
 }

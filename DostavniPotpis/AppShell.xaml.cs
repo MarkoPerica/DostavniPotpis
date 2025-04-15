@@ -1,4 +1,4 @@
-﻿using DostavniPotpis.Services.Navigation;
+﻿using DostavniPotpis.Services;
 using DostavniPotpis.Views;
 
 namespace DostavniPotpis

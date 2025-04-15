@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DostavniPotpis.Services.Navigation
+namespace DostavniPotpis.Services
 {
     public interface INavigationService
     {

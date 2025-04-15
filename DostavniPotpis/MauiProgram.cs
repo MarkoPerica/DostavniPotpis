@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Maui;
 using DostavniPotpis.Services;
-using DostavniPotpis.Services.Navigation;
-using DostavniPotpis.Services.Preferences;
+using DostavniPotpis.Services;
+using DostavniPotpis.Services;
 using DostavniPotpis.ViewModels;
 using DostavniPotpis.Views;
 using Microsoft.Extensions.Logging;
