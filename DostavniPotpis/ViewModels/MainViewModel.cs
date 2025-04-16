@@ -92,6 +92,35 @@ namespace DostavniPotpis.ViewModels
         }
 
         [RelayCommand]
+        public async Task EditDokumentOdbij(DocumentModel documentModel)
+        {
+            if (documentModel.OznStDok != GlobalSettings.StatusIsporuceno)
+            {
+                var result = await Shell.Current.DisplayAlert("Isporuka", "Kupac odbija isporuku?", "Da", "Ne");
+                if (result)
+                {
+                    documentModel.Backgroundcolor = GlobalSettings.StatusOdbijenoColor;
+                    documentModel.OznStDok = GlobalSettings.StatusOdbijeno;
+                    documentModel.Preneseno = false;
+                    var delResponse = await _databaseService.UpdateDocument(documentModel);
+                    if (delResponse > 0)
+                    {
+                        await SendDocument(documentModel.Id);
+
+
+                        //Dokumenti.Remove(dokumentModel);
+                        //Dokumenti.Add(dokumentModel);
+                        await GetDocumentsList();
+                    }
+                }
+            }
+            else
+            {
+                await Shell.Current.DisplayAlert("Dokument je već potpisan", "Nije moguće odbiti isporuku.", "Ok");
+            }
+        }
+
+        [RelayCommand]
         public async Task EditDocumentImage(DocumentModel documentModel)
         {
             var navigationParameter = new Dictionary<string, object> { { "SelectedRacun", documentModel } };
