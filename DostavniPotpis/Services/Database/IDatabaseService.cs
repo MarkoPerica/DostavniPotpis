@@ -12,6 +12,7 @@ namespace DostavniPotpis.Services
         Task<int> AddDocument(DocumentModel documentModel);
         Task<List<DocumentModel>> GetDocumentList();
         Task<DocumentModel> GetDocumentById(int id);
+        Task<int> GetDocumentByDocument(string document);
         Task<int> UpdateDocument(DocumentModel documentModel);
         Task<int> DeleteDocument(DocumentModel documentModel);
         Task DeleteDocumentAll();

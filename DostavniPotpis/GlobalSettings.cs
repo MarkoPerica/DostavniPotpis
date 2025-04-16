@@ -24,5 +24,7 @@ namespace DostavniPotpis
         public const string StatusIsporucenoColor = "#008000";
         public const string StatusVracenoColor = "#080df7";
         public const string StatusOdbijenoColor = "#F25922";
+
+        public const string BarcodePotpisCheckTag = "<!EP!>";
     }
 }

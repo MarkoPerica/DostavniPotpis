@@ -1,5 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using DostavniPotpis.Messages;
 using DostavniPotpis.Models;
 using DostavniPotpis.Services;
 using System;
@@ -45,6 +47,11 @@ namespace DostavniPotpis.ViewModels
             _navigationService = navigationService;
             _preferencesService = preferencesService;
             _apiService = apiService;
+
+            WeakReferenceMessenger.Default.Register<SendBarcodeDecode>(this, (r, m) =>
+            {
+                OnMessageReceived(m.Value);
+            });
 
             
         }
@@ -193,12 +200,87 @@ namespace DostavniPotpis.ViewModels
             }
         }
 
-
         [RelayCommand]
         private async Task Refresh()
         {
             await GetDocumentsList();
             IsRefreshing = false;
+        }
+
+        private async void OnMessageReceived(string value)
+        {
+            //mičem fokus s entry polja
+            WeakReferenceMessenger.Default.Send(new RemoveFocusMessage());
+
+            var barkod = value;
+
+            var documents = await _databaseService.GetDocumentList();
+
+            bool flag = true;
+
+            string[] lines = barkod.Split(new String[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+
+            //barcode mora imati minimalno 5 linija
+            if (lines.Length < 5)
+            {
+                return;
+            }
+
+            var document = lines[4].Replace("/", " ");
+
+            string[] parsed = document.Split(' ');
+
+            foreach (DocumentModel row in documents)
+                if (row.Document == lines[4])
+                    flag = false;
+
+
+            DocumentModel newDocument = new DocumentModel
+            {
+                Oznvd = Int32.Parse(parsed[0]),
+                Godina = Int32.Parse(parsed[1]),
+                Brdok = Int32.Parse(parsed[2]),
+                Kupac = lines[1],
+                KupacDio = lines[1] + (lines[2] != "" ? " - " + lines[2] : ""),
+                Adresa = lines[3],
+                Document = lines[4],
+                Izvrsilac = _preferencesService.GetPreferences("extraUser", string.Empty),
+                OznStDok = GlobalSettings.StatusUTijeku,
+                Backgroundcolor = GlobalSettings.StatusUTijekuColor,
+                TimeStamp = DateTime.Now,
+                Preneseno = false
+            };
+
+            if (flag && lines[0] == GlobalSettings.BarcodePotpisCheckTag)
+            {
+                int documentId = await _databaseService.AddDocument(newDocument);
+                //await GetDocumentsList();
+
+                await SendDocument(documentId);
+
+            }
+            else if (!flag && lines[0] == GlobalSettings.BarcodePotpisCheckTag)
+            {
+                newDocument.Id = await _databaseService.GetDocumentByDocument(newDocument.Document);
+                if (newDocument.Id != 0)
+                {
+                    var result = await Shell.Current.DisplayAlert("Dokument je već učitan", "Želite li potpisati dokument?", "Da", "Ne");
+                    if (result)
+                    {
+                        var navigationParameter = new Dictionary<string, object> { { "SelectedRacun", newDocument } };
+                        newDocument.ImageData = null;
+                        newDocument.OznStDok = GlobalSettings.StatusUTijeku;
+                        newDocument.Backgroundcolor = GlobalSettings.StatusUTijekuColor;
+                        newDocument.Preneseno = false;
+                        await _databaseService.UpdateDocument(newDocument);
+                        await _navigationService.NavigateToAsync($"SignatureView", navigationParameter);
+                    }
+                }
+            }
+
+            Array.Clear(lines, 0, lines.Length);
+
+            await GetDocumentsList();
         }
     }
 }

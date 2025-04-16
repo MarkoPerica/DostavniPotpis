@@ -43,6 +43,19 @@ namespace DostavniPotpis.Services
             return await _dbConnection.FindAsync<DocumentModel>(id);
         }
 
+        public async Task<int> GetDocumentByDocument(string document)
+        {
+            await SetUpDb();
+            var dokumenti = await _dbConnection.Table<DocumentModel>().ToListAsync();
+
+            foreach (DocumentModel d in dokumenti)
+            {
+                if (document == d.Document)
+                    return d.Id;
+            }
+            return 0;
+        }
+
         public async Task<int> UpdateDocument(DocumentModel documentModel)
         {
             await SetUpDb();
