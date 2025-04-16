@@ -113,7 +113,7 @@ namespace DostavniPotpis.ViewModels
                 await _databaseService.DeleteDocumentAll();
                 await GetDocumentsList();
             }
-        }
+        }        
 
         [RelayCommand]
         private async Task Refresh()

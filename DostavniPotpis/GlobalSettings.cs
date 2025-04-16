@@ -13,6 +13,7 @@ namespace DostavniPotpis
 
         public const string PingUri = "/DocumentSignature/web/Ping";
         public const string LoginUri = "/DocumentSignature/web/Login";
+        public const string DocumentSendUri = "/DocumentSignature/web/Send";
 
         public const int StatusUTijeku = 1; // "1 Isporuka u tijeku"
         public const int StatusIsporuceno = 2; // "2 Isporučeno"

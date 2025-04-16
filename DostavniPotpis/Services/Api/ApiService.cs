@@ -109,6 +109,73 @@ namespace DostavniPotpis.Services
             }
         }
 
+        public async Task<(bool Poslano, string ResponseContent)> PosaljiDokumentAsync(DocumentModel document, string username, string password, string domain = "")
+        {
+            string serverUri = await GetServerUri();
+
+            if (string.IsNullOrEmpty(serverUri))
+            {
+                return (false, "Pogrešan URI");
+            }
+
+            serverUri = serverUri + GlobalSettings.DocumentSendUri;
+
+            try
+            {
+                using (var client = GetOrCreateHttpClient(username, password, domain))
+                {
+                    var jsonContent = JsonConvert.SerializeObject(document);
+                    var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+
+                    try
+                    {
+                        HttpResponseMessage response = await client.PostAsync(serverUri, content);
+                        string responseContent = await response.Content.ReadAsStringAsync();
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            try
+                            {
+                                var parsedResponse = JsonConvert.DeserializeObject<DocumentResponseModel>(responseContent);
+
+                                if (parsedResponse != null && !parsedResponse.HasErrors)
+                                {
+                                    return (true, responseContent);
+                                }
+                                else
+                                {
+                                    string errorMessage = parsedResponse?.Message ?? "Nepoznata greška";
+                                    if (parsedResponse?.PasoeResponses != null && parsedResponse.PasoeResponses.Count > 0)
+                                    {
+                                        errorMessage = string.Join("\n", parsedResponse.PasoeResponses
+                                            .Where(e => e.IsError)
+                                            .Select(e => e.ErrorMessage));
+                                    }
+                                    return (false, $"Greška prilikom slanja dokumenta: {errorMessage}");
+                                }
+                            }
+                            catch (JsonException ex)
+                            {
+                                return (false, $"Greška pri parsiranju odgovora: {ex.Message}");
+                            }
+                        }
+                        else
+                        {
+                            return (false, $"Greška: {response.StatusCode} - {responseContent}");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        return (false, ex.Message);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return (false, ex.Message);
+            }
+        }
+
         private HttpClient GetOrCreateHttpClient(string username = "", string password = "", string domain = "")
         {
             HttpClient httpClient = new HttpClient();
