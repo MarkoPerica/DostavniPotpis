@@ -46,14 +46,12 @@ namespace DostavniPotpis.ViewModels
             _databaseService = databaseService;
             _navigationService = navigationService;
             _preferencesService = preferencesService;
-            _apiService = apiService;
+            _apiService = apiService;            
 
             WeakReferenceMessenger.Default.Register<SendBarcodeDecode>(this, (r, m) =>
             {
                 OnMessageReceived(m.Value);
-            });
-
-            
+            });            
         }
 
         public async Task GetDocumentsList()

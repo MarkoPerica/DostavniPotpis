@@ -2,11 +2,46 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="DostavniPotpis.Views.SignatureView"
-             Title="SignatureView">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+             xmlns:models="clr-namespace:DostavniPotpis.Models"
+             xmlns:viewModels="clr-namespace:DostavniPotpis.ViewModels"
+             x:DataType="viewModels:SignatureViewModel"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             Title="Potpis"
+             BackgroundColor="WhiteSmoke">
+
+    <Grid
+        Margin="0,20,0,0"
+        ColumnDefinitions="*,*"
+        ColumnSpacing="10"
+        RowDefinitions="Auto,*,Auto"
+        RowSpacing="10"
+        Padding="10">
+        <Frame Grid.ColumnSpan="2">
+            <Entry Grid.ColumnSpan="2" Text="{Binding Potpisao.Value, Mode=OneWayToSource}" FontSize="18" Margin="0,0,0,0" VerticalOptions="Center" Placeholder="Potpisao" />
+        </Frame>
+        <Border
+            Grid.Row="1"
+            Grid.ColumnSpan="2">
+            <toolkit:DrawingView
+                x:Name="DrawView"
+                Grid.ColumnSpan="2"        
+                IsMultiLineModeEnabled="True"
+                ShouldClearOnFinish="False"
+                BackgroundColor="White"
+                LineColor="Black"
+                LineWidth="3"
+                Lines="{Binding Lines}"/>
+        </Border>
+
+        <Button Grid.Row="2" Text="Obriši"
+                BackgroundColor="#F25922"
+                Command="{Binding ClearPotpisCommand}"/>
+
+        <Button Grid.Row="2"
+                Grid.Column="1"            
+                Text="Spremi"
+                BackgroundColor="#F25922"
+                Command="{Binding SavePotpisCommand}"/>
+    </Grid>
+
 </ContentPage>

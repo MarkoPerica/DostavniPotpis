@@ -16,6 +16,5 @@ namespace DostavniPotpis.Services
         Task<int> UpdateDocument(DocumentModel documentModel);
         Task<int> DeleteDocument(DocumentModel documentModel);
         Task DeleteDocumentAll();
-
     }
 }
