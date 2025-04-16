@@ -66,6 +66,32 @@ namespace DostavniPotpis.ViewModels
         }
 
         [RelayCommand]
+        public async Task EditDocumentVrati(DocumentModel documentModel)
+        {
+            if (documentModel.OznStDok != GlobalSettings.StatusIsporuceno)
+            {
+                var result = await Shell.Current.DisplayAlert("Isporuka", "Vratiti pošiljku pošiljatelju?", "Da", "Ne");
+                if (result)
+                {
+                    documentModel.Backgroundcolor = GlobalSettings.StatusVracenoColor;
+                    documentModel.OznStDok = GlobalSettings.StatusVraceno;
+                    documentModel.Preneseno = false;
+                    var delResponse = await _databaseService.UpdateDocument(documentModel);
+                    if (delResponse > 0)
+                    {
+                        await SendDocument(documentModel.Id);
+
+                        await GetDocumentsList();
+                    }
+                }
+            }
+            else
+            {
+                await Shell.Current.DisplayAlert("Dokument je već potpisan", "Nije moguće vratiti isporuku.", "Ok");
+            }
+        }
+
+        [RelayCommand]
         public async Task EditDocumentImage(DocumentModel documentModel)
         {
             var navigationParameter = new Dictionary<string, object> { { "SelectedRacun", documentModel } };
@@ -114,6 +140,30 @@ namespace DostavniPotpis.ViewModels
                 await GetDocumentsList();
             }
         }        
+
+        private async Task SendDocument(int documentId)
+        {
+            var document = await _databaseService.GetDocumentById(documentId);
+            if (document != null)
+            {
+                var username = _preferencesService.GetPreferences("extraUser", string.Empty);
+                var password = _preferencesService.GetPreferences("extraPassword", string.Empty);
+
+                var (poslano, responseMessage) = await _apiService.PosaljiDokumentAsync(document, username, password);
+
+                if (poslano)
+                {
+                    document.Preneseno = true;
+                    await _databaseService.UpdateDocument(document);
+                    await GetDocumentsList();                    
+                }
+                else
+                {
+                    await Shell.Current.DisplayAlert("Greška", $"Slanje dokumenta nije uspjelo: {responseMessage}", "OK");
+                }
+            }
+        }
+
 
         [RelayCommand]
         private async Task Refresh()
