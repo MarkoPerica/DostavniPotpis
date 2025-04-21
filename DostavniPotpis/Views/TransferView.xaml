@@ -8,7 +8,7 @@
              Title="Postavke"
              BackgroundColor="WhiteSmoke">
 
-    <Grid RowDefinitions="Auto, Auto, *, Auto, Auto" Padding="20">
+    <Grid RowDefinitions="Auto, Auto, *, Auto, Auto, Auto" Padding="20">
 
         <!-- Switch za izvanmrežni način rada -->
         <Grid Grid.Row="0" ColumnDefinitions="*,*" Margin="0,0,0,10">
@@ -77,34 +77,16 @@
                     VerticalOptions="Center"/>
         </Grid>
 
-        <Grid Grid.Row="4"
-              ColumnDefinitions="*,*"
-              ColumnSpacing="10"
-              RowDefinitions="Auto,*,*,*,Auto"
-              RowSpacing="10"
-              Padding="10"
-              Margin="1">
+        <VerticalStackLayout Grid.Row="4" Padding="30">
+            <Label Text="Aplikacijski poslužitelj" 
+                   FontAttributes="Bold"/>
+            <Entry Text="{Binding Appserver}"
+                   Placeholder="Aplikacijski poslužitelj"
+                   FontSize="16"/>
+        </VerticalStackLayout>
 
-            <Label Grid.Row="0"
-                   Grid.ColumnSpan="2"   
-                   Text="Postavke za aplikacijski poslužitelj"
-                   FontSize="18"
-                   FontAttributes="Bold"
-                   VerticalOptions="Start" 
-                   HeightRequest="50"
-                   MinimumWidthRequest="250"
-                   HorizontalOptions="Center"/>
-
-            <VerticalStackLayout Grid.Row="1" Grid.ColumnSpan="2">
-                <Label Text="Aplikacijski poslužitelj" 
-                       FontAttributes="Bold"/>
-                <Entry Text="{Binding Appserver}"
-                       Placeholder="Aplikacijski poslužitelj"
-                       FontSize="16"/>
-            </VerticalStackLayout>
-        </Grid>
-        <VerticalStackLayout>
-            <Button Text="Izlaz" 
+        <VerticalStackLayout Grid.Row="5">
+            <Button Text="Izlaz iz aplikacije" 
                     Margin="10"
                     BackgroundColor="#F25922"
                     TextColor="White"
