@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Maui.Storage;
 
 namespace DostavniPotpis.Services
 {
@@ -10,12 +11,22 @@ namespace DostavniPotpis.Services
     {
         public string GetPreferences(string key, string defaultValue)
         {
-            return Microsoft.Maui.Storage.Preferences.Get(key, defaultValue);
+            return Preferences.Get(key, defaultValue);
+        }
+
+        public bool GetPreferences(string key, bool defaultValue)
+        {
+            return Preferences.Get(key, defaultValue);
         }
 
         public void SavePreferences(string key, string value)
         {
-            Microsoft.Maui.Storage.Preferences.Set(key, value);
+            Preferences.Set(key, value);
+        }
+
+        public void SavePreferences(string key, bool value)
+        {
+            Preferences.Set(key, value);
         }
     }
 }

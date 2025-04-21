@@ -5,11 +5,110 @@
              x:Class="DostavniPotpis.Views.TransferView"
              xmlns:viewModels="clr-namespace:DostavniPotpis.ViewModels"
              x:DataType="viewModels:TransferViewModel"
-             Title="TransferView">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+             Title="Postavke"
+             BackgroundColor="WhiteSmoke">
+
+    <Grid RowDefinitions="Auto, Auto, *, Auto, Auto" Padding="20">
+
+        <!-- Switch za izvanmrežni način rada -->
+        <Grid Grid.Row="0" ColumnDefinitions="*,*" Margin="0,0,0,10">
+            <Label Grid.Column="0"
+                   Text="Izvanmrežni način rada"
+                   VerticalOptions="Center"/>
+
+            <Switch x:Name="switchOffline"
+                    IsToggled="{Binding IsOffline}"
+                    ThumbColor="#F25922"
+                    OnColor="#F2B5A7"
+                    Grid.Column="1">
+                <VisualStateManager.VisualStateGroups>
+                    <VisualStateGroup x:Name="CommonStates">
+                        <VisualState x:Name="On">
+                            <VisualState.Setters>
+                                <Setter Property="ThumbColor" Value="#F25922"/>
+                                <Setter Property="OnColor" Value="#F2B5A7"/>
+                            </VisualState.Setters>
+                        </VisualState>
+                        <VisualState x:Name="Off">
+                            <VisualState.Setters>
+                                <Setter Property="ThumbColor" Value="White"/>
+                                <Setter Property="OnColor" Value="LightGray"/>
+                            </VisualState.Setters>
+                        </VisualState>
+                    </VisualStateGroup>
+                </VisualStateManager.VisualStateGroups>
+                <Switch.Behaviors>
+                    <toolkit:EventToCommandBehavior
+                       EventName="Toggled"
+                       CommandParameter="{Binding IsToggled, Source={x:Reference switchOffline}}"
+                       Command="{Binding OfflineModeCommand}" />
+                </Switch.Behaviors>
+            </Switch>
+        </Grid>
+
+        <!-- Slika -->
+        <Image Grid.Row="1"
+               Source="baza_prijenos.png"
+               HeightRequest="200"
+               VerticalOptions="Center"/>
+
+        <!-- Placeholder za Button & ProgressBar -->
+        <Grid Grid.Row="3" HeightRequest="50" VerticalOptions="End">
+
+            <!-- ProgressBar zauzima istu poziciju kao i Button-->
+            <ProgressBar Grid.Row="0"
+                         HeightRequest="50"
+                         IsVisible="{Binding IsProgressBarVisible}"
+                         Progress="{Binding Progress}"
+                         VerticalOptions="Center"/>
+
+            <!-- Button za prijenos -->
+            <Button Grid.Row="0"
+                    Text="Prijenos liste u centralu"
+                    BackgroundColor="#F25922"
+                    HeightRequest="50"
+                    Margin="5"
+                    BorderColor="White"
+                    FontSize="18"
+                    TextColor="White"
+                    Command="{Binding PrijenosCommand}"
+                    IsVisible="{Binding IsButtonEnabled}"
+                    IsEnabled="{Binding IsButtonEnabled}"
+                    VerticalOptions="Center"/>
+        </Grid>
+
+        <Grid Grid.Row="4"
+              ColumnDefinitions="*,*"
+              ColumnSpacing="10"
+              RowDefinitions="Auto,*,*,*,Auto"
+              RowSpacing="10"
+              Padding="10"
+              Margin="1">
+
+            <Label Grid.Row="0"
+                   Grid.ColumnSpan="2"   
+                   Text="Postavke za aplikacijski poslužitelj"
+                   FontSize="18"
+                   FontAttributes="Bold"
+                   VerticalOptions="Start" 
+                   HeightRequest="50"
+                   MinimumWidthRequest="250"
+                   HorizontalOptions="Center"/>
+
+            <VerticalStackLayout Grid.Row="1" Grid.ColumnSpan="2">
+                <Label Text="Aplikacijski poslužitelj" 
+                       FontAttributes="Bold"/>
+                <Entry Text="{Binding Appserver}"
+                       Placeholder="Aplikacijski poslužitelj"
+                       FontSize="16"/>
+            </VerticalStackLayout>
+        </Grid>
+        <VerticalStackLayout>
+            <Button Text="Izlaz" 
+                    Margin="10"
+                    BackgroundColor="#F25922"
+                    TextColor="White"
+                    Command="{Binding LogoutCommand}"/>
+        </VerticalStackLayout>
+    </Grid>
 </ContentPage>

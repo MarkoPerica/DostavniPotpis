@@ -14,7 +14,7 @@
     Padding="30"
     VerticalOptions="Start">
 
-        <Image Source="extra.png" HeightRequest="100" WidthRequest="200" />
+        <Image Source="appicon.png" HeightRequest="100" WidthRequest="200" />
         <StackLayout>
             <Label Margin="0,50,0,30" Text="Prijava u aplikaciju" FontSize="Title" TextColor="{StaticResource Gray600}" HorizontalTextAlignment="Start" />
         </StackLayout>

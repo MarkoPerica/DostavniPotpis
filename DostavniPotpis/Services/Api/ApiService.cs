@@ -176,6 +176,49 @@ namespace DostavniPotpis.Services
             }
         }
 
+        public async Task<(bool Poslano, List<int> uspjesnoPoslani, List<PasoeResponse> neuspjesniDokumenti, string ResponseContent)>
+        PosaljiDokumenteAsync(List<DocumentModel> dokumenti, string username, string password, string domain = "")
+        {
+            string serverUri = await GetServerUri();
+            if (string.IsNullOrEmpty(serverUri))
+                return (false, new List<int>(), new List<PasoeResponse>(), "Pogrešan URI");
+
+            serverUri = serverUri + GlobalSettings.DocumentSendUri;
+
+            try
+            {
+                using (var client = GetOrCreateHttpClient(username, password, domain))
+                {
+                    var jsonContent = JsonConvert.SerializeObject(dokumenti);
+                    var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+
+                    HttpResponseMessage response = await client.PostAsync(serverUri, content);
+                    string responseContent = await response.Content.ReadAsStringAsync();
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var parsedResponse = JsonConvert.DeserializeObject<DocumentResponseModel>(responseContent);
+
+                        if (parsedResponse != null)
+                        {
+                            //spremim ID-eve prenesenih dokumenata u listu
+                            var uspjesniDokumenti = parsedResponse.ReceivedDocuments ?? new List<int>();
+                            //spremim greške koje je vratio pasoe
+                            var neuspjesniDokumenti = parsedResponse.PasoeResponses ?? new List<PasoeResponse>();
+
+                            return (uspjesniDokumenti.Count > 0, uspjesniDokumenti, neuspjesniDokumenti, responseContent);
+                        }
+                    }
+
+                    return (false, new List<int>(), new List<PasoeResponse>(), $"Greška: {response.StatusCode} - {responseContent}");
+                }
+            }
+            catch (Exception ex)
+            {
+                return (false, new List<int>(), new List<PasoeResponse>(), $"Greška: {ex.Message}");
+            }
+        }
+
         private HttpClient GetOrCreateHttpClient(string username = "", string password = "", string domain = "")
         {
             HttpClient httpClient = new HttpClient();

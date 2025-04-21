@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using DostavniPotpis.Helpers;
 using DostavniPotpis.Messages;
 using DostavniPotpis.Models;
 using DostavniPotpis.Services;
@@ -20,9 +21,7 @@ namespace DostavniPotpis.ViewModels
     {
         public static List<DocumentModel> DocumentsListForSearch { get; private set; } = new List<DocumentModel>();
 
-        public ObservableCollection<DocumentModel> Documents { get; set; } = new ObservableCollection<DocumentModel>();
-
-        public ObservableCollection<object> SelectedDocuments { get; set; } = new ObservableCollection<object>();
+        public ObservableCollection<DocumentModel> Documents { get; set; } = new ObservableCollection<DocumentModel>();        
 
         [ObservableProperty]
         private bool _isRefreshing;
@@ -32,9 +31,6 @@ namespace DostavniPotpis.ViewModels
 
         [ObservableProperty]
         private string _searchText;
-
-        [ObservableProperty]
-        private bool isPotpisiButtonVisible;
 
         private readonly IDatabaseService _databaseService;
         private readonly INavigationService _navigationService;
@@ -46,11 +42,16 @@ namespace DostavniPotpis.ViewModels
             _databaseService = databaseService;
             _navigationService = navigationService;
             _preferencesService = preferencesService;
-            _apiService = apiService;            
+            _apiService = apiService;
+
+            WeakReferenceMessenger.Default.Register<MainViewModel, RefreshCollectionMessage>(this, (r, m) =>
+            {
+                r.GetDocumentsList();
+            });
 
             WeakReferenceMessenger.Default.Register<SendBarcodeDecode>(this, (r, m) =>
             {
-                OnMessageReceived(m.Value);
+                OnMessageReceived(m.Value);               
             });            
         }
 
@@ -64,6 +65,28 @@ namespace DostavniPotpis.ViewModels
             {
                 documentList = documentList.OrderBy(d => d.OznStDok).ThenBy(d => d.KupacDio).ToList();
                 foreach(var document in documentList)
+                {
+                    Documents.Add(document);
+                }
+            }
+        }
+
+        [RelayCommand]
+        public async Task SearchBuyer()
+        {
+            if (string.IsNullOrWhiteSpace(SearchText))
+            {
+                await GetDocumentsList();
+                return;
+            }
+
+            string normalizedSearchText = SearchText.RemoveDiacritics();
+            Documents.Clear();
+            var documentListFiltered = await _databaseService.SearchBuyer(normalizedSearchText);
+
+            if (documentListFiltered?.Count > 0)
+            {
+                foreach (var document in documentListFiltered.OrderBy(d => d.OznStDok).ThenBy(d => d.KupacDio))
                 {
                     Documents.Add(document);
                 }

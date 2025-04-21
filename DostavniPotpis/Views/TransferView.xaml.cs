@@ -1,9 +1,12 @@
+using DostavniPotpis.ViewModels;
+
 namespace DostavniPotpis.Views;
 
 public partial class TransferView : ContentPage
 {
-	public TransferView()
+	public TransferView(TransferViewModel viewModel)
 	{
-		InitializeComponent();
+		BindingContext = viewModel;
+		InitializeComponent();		
 	}
 }

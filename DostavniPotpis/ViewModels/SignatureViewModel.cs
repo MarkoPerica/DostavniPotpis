@@ -38,7 +38,7 @@ namespace DostavniPotpis.ViewModels
         }
 
         [RelayCommand]
-        public async Task ClearPoptis()
+        public async Task ClearPotpis()
         {
             Lines.Clear();
         }

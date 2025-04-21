@@ -1,4 +1,5 @@
-﻿using DostavniPotpis.Models;
+﻿using DostavniPotpis.Helpers;
+using DostavniPotpis.Models;
 using SQLite;
 using System;
 using System.Collections.Generic;
@@ -54,6 +55,25 @@ namespace DostavniPotpis.Services
                     return d.Id;
             }
             return 0;
+        }
+
+        public async Task<List<DocumentModel>> SearchBuyer(string filterText)
+        {
+            await SetUpDb();
+
+            string normalizedFilterText = filterText.RemoveDiacritics(); // Normaliziraj unos korisnika
+
+            // Dohvati sve dokumente iz baze
+            var documents = await _dbConnection.Table<DocumentModel>().ToListAsync();
+
+            // Filtriraj podatke u memoriji (pretraga po više polja)
+            var filteredList = documents
+                .Where(x => x.KupacDio.RemoveDiacritics().StartsWith(normalizedFilterText, StringComparison.CurrentCultureIgnoreCase) ||
+                            x.Kupac.RemoveDiacritics().StartsWith(normalizedFilterText, StringComparison.CurrentCultureIgnoreCase) ||
+                            x.Adresa.RemoveDiacritics().StartsWith(normalizedFilterText, StringComparison.CurrentCultureIgnoreCase))
+                .ToList();
+
+            return filteredList;
         }
 
         public async Task<int> UpdateDocument(DocumentModel documentModel)
